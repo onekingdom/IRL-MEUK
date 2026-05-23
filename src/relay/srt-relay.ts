@@ -42,6 +42,7 @@ function execFileAsync(file: string, args: string[]): Promise<{ stdout: string; 
   });
 }
 
+const OUTPUT_CONNECTED_RE = /^Output #0\b/i;
 const BITRATE_LINE =
   /frame=\s*(\d+).*?fps=\s*([\d.]+).*?size=\s*([\d.]+)([kKmMgG]?i?B).*?time=.*?bitrate=\s*([\d.]+)\s*kbits\/s/i;
 const RELAY_FATAL_STDERR_RE =
@@ -163,6 +164,7 @@ export class SrtRelay {
   private _listenPort: number | null = null;
   private _obsPort: number | null = null;
   private _statsTimer: ReturnType<typeof setInterval> | null = null;
+  private _outputConnectedLogged = false;
 
   onStats: ((stats: RelayStats) => void) | null = null;
   onProcessExit: ((info: ProcessExitInfo) => void) | null = null;
@@ -191,9 +193,20 @@ export class SrtRelay {
 
   resolvePorts(settings?: Partial<Settings>): ResolvePorts {
     const relay = settings?.relay;
+    const envListen = Number(process.env.LISTEN_PORT);
+    const envObs = Number(process.env.OBS_PORT);
     const listenPort =
-      Number(relay?.listenPort) > 0 ? Math.round(Number(relay?.listenPort)) : 8000;
-    const obsPort = Number(relay?.obsPort) > 0 ? Math.round(Number(relay?.obsPort)) : 8001;
+      Number.isFinite(envListen) && envListen > 0
+        ? Math.round(envListen)
+        : Number(relay?.listenPort) > 0
+          ? Math.round(Number(relay?.listenPort))
+          : 8000;
+    const obsPort =
+      Number.isFinite(envObs) && envObs > 0
+        ? Math.round(envObs)
+        : Number(relay?.obsPort) > 0
+          ? Math.round(Number(relay?.obsPort))
+          : 8001;
     return { listenPort, obsPort };
   }
 
@@ -395,6 +408,7 @@ export class SrtRelay {
     this._bytesApprox = 0;
     this._stderrRing = [];
     this._stderrLineBuf = '';
+    this._outputConnectedLogged = false;
     this.startedAt = Date.now();
 
     return new Promise<RelayStats>((resolve, reject) => {
@@ -608,6 +622,11 @@ export class SrtRelay {
           this.stats.relayError = reason;
         }
       }
+      if (!this._outputConnectedLogged && OUTPUT_CONNECTED_RE.test(line)) {
+        this._outputConnectedLogged = true;
+        console.log(`[relay] output listener: client connected on port ${this._obsPort ?? 8001}`);
+      }
+
       const m = line.match(BITRATE_LINE);
       if (m) {
         const frame = Number(m[1]);
