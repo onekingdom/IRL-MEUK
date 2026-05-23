@@ -1,0 +1,12 @@
+node_modules/
+data/connections.log
+data/certs/*.pem
+data/obs-cache/
+
+# FFmpeg MPEG-TS test captures (project root only — not src/)
+/live.ts
+/test-*.ts
+/multi.ts
+/hevc.ts
+/map0-out.ts
+/sel-out.ts

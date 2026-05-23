@@ -1,0 +1,24 @@
+{
+  "name": "srt-obs-monitor-web",
+  "version": "1.0.0",
+  "description": "SRT stream monitor with OBS scene switching",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "bun src/index.ts",
+    "dev": "bun --watch src/index.ts",
+    "test": "bun test"
+  },
+  "engines": {
+    "bun": ">=1.0"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "ffmpeg-static": "^5.2.0",
+    "obs-websocket-js": "^5.0.6"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.17.0"
+  }
+}

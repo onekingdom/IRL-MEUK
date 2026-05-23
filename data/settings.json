@@ -1,0 +1,70 @@
+{
+  "server": {
+    "host": "0.0.0.0",
+    "port": 9000,
+    "lanHost": "192.168.0.176"
+  },
+  "obs": {
+    "host": "127.0.0.1",
+    "port": 4455,
+    "password": "vkk57srt"
+  },
+  "scenes": {
+    "ok": "IRL",
+    "fail": "BRB",
+    "intro": "START",
+    "bypass": [
+      "START",
+      "THE END"
+    ],
+    "lowBitrateSuffix": "LBR",
+    "lowBitrateEnabled": true,
+    "lbrBitrateThresholdKbps": 1000
+  },
+  "streams": [
+    {
+      "id": "stream1",
+      "label": "Phone camera",
+      "enabled": true,
+      "type": "obs-media",
+      "mediaSourceName": "OK IRL CAM SOURCE",
+      "frozenDetectSeconds": 5,
+      "ristFailMode": false,
+      "srtBindHost": "0.0.0.0",
+      "srtPort": 8000,
+      "srtLatencyMs": 2500
+    }
+  ],
+  "monitor": {
+    "pollIntervalMs": 1000,
+    "streamFailDelaySeconds": 8,
+    "recoveryDelaySeconds": 3,
+    "frozenThresholdMs": 3000,
+    "mediaStateDebounceMs": 2500,
+    "relayWarmupSeconds": 10,
+    "connectionsLog": false,
+    "cameraMeterGainDb": 6
+  },
+  "srtLiveServer": {
+    "enabled": false,
+    "host": "127.0.0.1",
+    "port": 8000,
+    "statsPath": "stats",
+    "publisherPath": "publish/live/stream1",
+    "bitrateLowKbps": 800,
+    "bitrateFailKbps": 400,
+    "pollIntervalSeconds": 5
+  },
+  "relay": {
+    "enabled": true,
+    "listenPort": 8000,
+    "obsPort": 8001,
+    "ffmpegPath": "",
+    "startWithMonitoring": true,
+    "logLevel": "quiet"
+  },
+  "streamEnd": {
+    "sceneName": "THE END",
+    "delayMinutes": 2
+  }
+}
